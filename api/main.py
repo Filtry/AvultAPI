@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Query, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from api import AiloLite
+from api.api import AiloLite
 from typing import Union, Annotated, List
 from filters import format_date, lowerName, blanks, chkType
 from enums import ScenesSort, ActorsSort, GenderSort
