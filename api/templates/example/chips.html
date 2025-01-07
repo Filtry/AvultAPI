@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form with Restricted Chips</title>
+    <!-- Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h5>Form with Chips (Restricted Values)</h5>
+        <form id="chipsForm" action="/submit" method="POST">
+            <div class="input-field">
+                <label for="fruitChips">Select Fruits</label>
+                <div id="fruitChips" class="chips chips-autocomplete"></div>
+                <input type="hidden" name="selectedFruits" id="selectedFruits">
+            </div>
+            <button type="submit" class="btn">Submit</button>
+        </form>
+    </div>
+
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Predefined values for autocomplete
+            const predefinedValues = {
+                'Apple': null,
+                'Banana': null,
+                'Cherry': null,
+                'Date': null,
+                'Elderberry': null,
+                'Fig': null,
+                'Grapes': null,
+            };
+
+            // Initialize chips with autocomplete
+            const chipsElem = document.querySelector('#fruitChips');
+            const chipsInstance = M.Chips.init(chipsElem, {
+                autocompleteOptions: {
+                    data: predefinedValues,
+                    limit: Infinity,
+                    minLength: 1
+                },
+                onChipAdd: function(chipElement) {
+                    validateChip(chipElement);
+                    updateHiddenInput();
+                },
+                onChipDelete: function() {
+                    updateHiddenInput();
+                }
+            });
+
+            // Function to validate chips against predefined values
+            function validateChip(chipElement) {
+                const chipText = chipElement[0].M_Chips.chipsData.map(chip => chip.tag);
+                const invalidChips = chipText.filter(tag => !predefinedValues.hasOwnProperty(tag));
+
+                // Remove invalid chips and alert user
+                invalidChips.forEach(() => {
+                    chipElement[0].M_Chips.deleteChip(chipElement[0].M_Chips.chipsData.length - 1);
+                    alert("Only predefined values are allowed.");
+                });
+            }
+
+            // Function to update hidden input with selected chips
+            function updateHiddenInput() {
+                const chipData = chipsInstance.chipsData.map(chip => chip.tag);
+                document.getElementById('selectedFruits').value = JSON.stringify(chipData);
+            }
+
+            // Form submission handling
+            const form = document.getElementById('chipsForm');
+            form.addEventListener('submit', function(event) {
+                const selectedFruits = JSON.parse(document.getElementById('selectedFruits').value || '[]');
+                if (selectedFruits.length === 0) {
+                    event.preventDefault();
+                    alert('Please select at least one fruit.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

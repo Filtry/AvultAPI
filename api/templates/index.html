@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    {% include "base.html" %}
+    <style type="text/css">
+        {% if settings["blur_img"]%}
+        img {
+            filter: blur(8px); 
+            -webkit-filter: blur(8px);
+        }
+        video {
+            filter: blur(8px); 
+            -webkit-filter: blur(8px);
+        }
+        {%endif%}
+        {% if settings["isDark"]==True%}
+        .dark-c {
+            color: white;
+        }
+        body {
+            background-color: black;
+        }
+        {%endif%}
+        img {
+            height: 132.317px;
+            background: black;
+            object-fit: contain;
+        }
+    </style>
+    <title>Index | Ailo Profiler</title>
+    <body class="dark-c">
+        {%include 'nav.html'%}
+        {%if k!=None%}
+        <br>
+        <span>E-mail: </span><span>{{k['email']}}</span><br>
+        <span>Username: </span><span>{{k['username']}}</span><br>
+        <span>Expiry Time: </span><span>{{expiry}}</span>
+        <div class="row">
+        {% for site in k.marketplaceProfile.addons%}
+        <div class="col s12 m2">
+            <div class="card">
+                <div class="card-image">
+          <img src="{{site.thumb}}" onerror="this.src='{{url_for('static', path='/img/na.jpg')}}';">
+          <span class="card-title">{{site.title}}</span>
+        </div>
+            </div>
+        </div>
+        {%endfor%}
+        {%else%}
+        <h4>{{msg}}</h4>
+        {%endif%}
+    </div>
+    </body>
+</html>

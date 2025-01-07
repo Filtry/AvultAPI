@@ -1,0 +1,12 @@
+{
+    "blur_img": false,
+    "isDark": false,
+    "limit": 24,
+    "sort": {
+        "scenes": "date",
+        "gender": "all",
+        "actors": "alpha",
+        "movies": "title",
+        "series": "title"
+    }
+}
