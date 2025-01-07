@@ -3,3 +3,4 @@ requests
 fastapi-utils
 jinja2
 uvicorn
+typing-inspect
