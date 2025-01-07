@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Materialize Select with Autocomplete</title>
+  <!-- Import Materialize CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h5>Select with Autocomplete</h5>
+    <div class="input-field">
+      <input type="text" id="autocomplete-input" class="autocomplete">
+      <label for="autocomplete-input">Choose an option</label>
+    </div>
+    <div class="input-field">
+      <select id="select-options">
+        <option value="" disabled selected>Choose your option</option>
+        <option value="Option 1">Option 1</option>
+        <option value="Option 2">Option 2</option>
+        <option value="Option 3">Option 3</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Import Materialize JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Materialize select
+      const selectElem = document.querySelector('select');
+      M.FormSelect.init(selectElem);
+
+      // Initialize Materialize autocomplete
+      const autocompleteData = {
+        "Option 1": null,
+        "Option 2": null,
+        "Option 3": null
+      };
+      const autocompleteInput = document.querySelector('#autocomplete-input');
+      M.Autocomplete.init(autocompleteInput, {
+        data: autocompleteData,
+        onAutocomplete: function(val) {
+          // Sync autocomplete value with select
+          const selectInstance = M.FormSelect.getInstance(selectElem);
+          const selectOptions = selectElem.options;
+
+          for (let i = 0; i < selectOptions.length; i++) {
+            if (selectOptions[i].text === val) {
+              selectElem.selectedIndex = i;
+              selectInstance.input.value = val; // Update select dropdown
+              break;
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

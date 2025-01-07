@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+{% include "base.html" %}
+<style type="text/css">
+{% if settings["blur_img"]%}
+    img {
+        filter: blur(8px); 
+        -webkit-filter: blur(8px);
+    }
+    video {
+        filter: blur(8px); 
+        -webkit-filter: blur(8px);
+    }
+{%endif%}
+</style>
+<body>
+	{% include 'nav.html' %}
+    <form id="filter" method="get" action="/web/channels">
+    <div class="row">
+    <title>Channels - {{meta.total}} | Ailo Profiler</title>
+    <h3 class="col s12 m3">Channels - {{meta.total}}</h3>
+    <div class="col s12 m5">
+        <div class="input-field inline">
+            <input id="search" type="search" name="search" required {%if defVal['title']!=None%}value="{{defVal['title']}}"{%else%} {%endif%}>
+            <i onclick="document.getElementById('search').value=''" class="material-icons">close</i>
+        </div>
+        <button class="btn waves-effect waves-light" type="submit">Search<i class="material-icons left">search</i></button>
+        <button data-target="modal1" class="btn modal-trigger"><i class="material-icons left">filter_list</i>Filters</button>
+        <a class="waves-effect waves-light btn" href="/web/channels">Reset</a>
+    </div>
+    </div>
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <div class="row">
+                <div class="input-field col s12" id="siteFilter">
+                    <select multiple name="brand">
+                        <option value="" disabled selected>Choose Sites</option>
+                        {%for brand,name in sites.items()%}
+                        <option value="{{brand}}" {%if defVal['sites']!=None and defVal['sites']==brand %}selected{%else%} {%endif%}>{{name}}</option>
+                        {%endfor%}
+                    </select>
+                    <label>Sites</label>
+                </div>
+                <div class="input-field col s12" id="genderFilter">
+                    <select name="sort">
+                        {%for sortQ in sorts%}
+                        <option value="{{sortQ}}" {%if sort==sortQ %}selected{%else%} {%endif%}>{{sortQ}}</option>
+                        {%endfor%}
+                    </select>
+                    <label>Sort</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="/web/channels" class="modal-close waves-effect waves-green btn-flat">Reset</a>
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="document.getElementById('filter').submit();">Search</a>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="page" value=1>
+    </form>
+    <div class="row">
+        {%for channel in channels%}
+        <div class="col s12 m3">
+            <div class="card">
+                <div class="card-image hover-container">
+                    {%if channel.images!=[] and 'card_main_rect' in channel.images%}
+                    <img class="hover-image"src="{{channel['images']['card_main_rect']['0']['md']['url']}}" onerror="this.src='{{url_for('static', path='/img/na.jpg')}}';">
+                    {%elif channel.images!=[] and 'banner' in channel.images%}
+                    <img class="hover-image"src="{{channel['images']['banner']['0']['md']['url']}}" onerror="this.src='{{url_for('static', path='/img/na.jpg')}}';">
+                    {%else%}
+                    <img class="hover-image"src="{{url_for('static', path='/img/na.jpg')}}">
+                    {%endif%}
+                </div>
+                <div class="card-content" style="padding: 5px;">
+                    <a href="/web/scenes?collectionId={{channel.id}}"><span class="card-title truncate">{{channel.name}}</span></a>
+                    <span>{{channel.lastSceneReleaseDate | format_date}}</span>
+                    <span class="right">Scenes: {{channel.stats.scenes}}</span>
+                </div>
+                <div class="card-action" style="padding: 5px;">
+                   <a href="/web/channels?brand={{channel.brand}}" style="margin-right: 0px;"> <div class="chip">{{channel.brandMeta.displayName}}</div></a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll('select');
+            var instances = M.FormSelect.init(elems, {});
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll('.modal');
+            var instances = M.Modal.init(elems, {});
+        });
+    </script>
+    <ul class="pagination">
+    {%if 'prev' in pg%}
+      <li class="waves-effect"><a href="{{pg['prev']}}"><i class="material-icons">chevron_left</i></a></li>
+    {%else%}
+      <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+    {%endif%}
+    {%for page in pg['ellipsis']%}
+    {%if page[0]==pg.page%}
+    <li class="active"><a href="{{page[1]}}">{{page[0]}}</a></li>
+    {%else%}
+    <li class="waves-effect"><a href="{{page[1]}}">{{page[0]}}</a></li>
+    {%endif%}
+    {%endfor%}
+    {%if 'next' in pg and pg.pages!=1%}
+      <li class="waves-effect"><a href="{{pg['next']}}"><i class="material-icons">chevron_right</i></a></li>
+    {%else%}
+      <li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+    {%endif%}
+  </ul>
+</body>
